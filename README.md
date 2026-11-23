@@ -99,7 +99,7 @@ src/engine.js         Detection engine: rules, entities, URL forensics, ML infer
 src/model.js          Trained model weights (generated)
 dist/scamshield.html  Single-file offline build
 ml/                   Dataset generator + training script + data
-tests/                Test runner, labelled cases, JS/Python parity data
+tests/              Engine tests, browser end-to-end test, labelled cases, parity data
 docs/TECHNICAL.md     Architecture, model choices, privacy design, evaluation
 build.py              Bundler for dist/
 ```
