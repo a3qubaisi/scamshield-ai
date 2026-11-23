@@ -29,7 +29,7 @@ Victims usually lose money in the first few minutes, before they think to check 
 | **Scan message** | Paste any message → 0–100 risk score, a verdict, the likely scam type, each reason in plain words, and the red flags highlighted in the text. |
 | **Check link** | Checks a link **without opening it**. It flags copycat domains (`emlratesnbd.com`), brand names inside fake domains (`adpolice-fines.top`), fake "gov" sites that don't end in `.gov.ae`, link shorteners, raw IP addresses, Punycode look-alike letters, and app/APK downloads. |
 | **Report to Aman** | One tap builds a structured report with links made unclickable ("defanged"), plus buttons to call 8002626, SMS 2828 or email Aman. Nothing is sent automatically. |
-| **Intel board** | Anonymous on-device statistics: scam types, most-impersonated entities, and a list of malicious links/numbers (IOCs) exportable as CSV for cybercrime teams. |
+| **Intel board** | Anonymous on-device statistics: scam types, most-impersonated entities, and a list of malicious links/numbers (IOCs). Exports to a CSV file that opens in Excel, with 7 columns (indicator, kind, times seen, likely scam type, impersonated entity, first seen, last seen) for cybercrime teams. |
 | **Awareness** | Golden rules, official reporting channels, and a large-text mode for older users. |
 
 The interface is in Arabic (right-to-left) and English, built mobile-first, and works fully offline.
@@ -61,7 +61,7 @@ Full details are in [`docs/TECHNICAL.md`](docs/TECHNICAL.md): architecture, mode
 | AI model on the public UCI SMS Spam benchmark (1,115 held-out English SMS) | **AUC 0.990**, accuracy 98.7%, scam precision 96.6%, recall 94.0% |
 | URL forensics cases | 7/7 |
 | JavaScript vs Python model parity | max difference 6×10⁻⁶ |
-| Browser end-to-end (every button, AR/EN, phone + desktop, offline, XSS) | 242/242 |
+| Browser end-to-end (every button, AR/EN, phone + desktop, offline, XSS, CSV export) | 254/254 |
 | Fuzzing (5,000 random AR/EN/emoji inputs, 200 KB messages) | no crashes, slowest 55 ms |
 
 ## 5. Run it

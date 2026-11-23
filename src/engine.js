@@ -57,7 +57,7 @@ const ENTITIES=[
  {id:'amazon',en:'Amazon',ar:'أمازون',names:['amazon','امازون'],domains:['amazon.ae','amazon.com']},
  {id:'noon',en:'noon',ar:'نون',names:['noon.com','noon order'],domains:['noon.com']}
 ];
-const OFFICIAL_DOMAINS=[...new Set(ENTITIES.flatMap(e=>e.domains).concat(['gov.ae','u.ae','whatsapp.com','google.com','apple.com','microsoft.com','linkedin.com']))];
+const OFFICIAL_DOMAINS=[...new Set(ENTITIES.flatMap(e=>e.domains).concat(['gov.ae','u.ae','whatsapp.com','wa.me','google.com','apple.com','microsoft.com','linkedin.com']))];
 const BRAND_TOKENS=['adpolice','police','moi','icp','uaepass','tamm','darb','salik','rta','customs','centralbank','emiratespost','aramex','dhl','etisalat','eand','bankfab','adcb','emiratesnbd','enbd','adib','mashreq','adnoc','etihad','emirates','lulu','carrefour','amazon','noon','gov','government','bank','post','fines','fine','uae','dubai','abudhabi'];
 const SHORTENERS=['bit.ly','tinyurl.com','t.co','goo.gl','is.gd','cutt.ly','rb.gy','ow.ly','shorturl.at','tiny.cc','rebrand.ly','t.ly','s.id','v.gd','bitly.ws','lnkd.in','surl.li','urlz.fr','qrco.de','linktr.ee'];
 const RISKY_TLDS=['xyz','top','online','site','shop','store','live','icu','cc','tk','ml','ga','cf','gq','buzz','club','vip','info','click','link','support','help','services','work','pw','rest','cyou','sbs','cfd','monster','quest','mom','lol','bond','win','loan','men'];

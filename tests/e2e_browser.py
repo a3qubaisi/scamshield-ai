@@ -68,8 +68,11 @@ for target in [(ROOT/'dist'/'scamshield.html').as_uri(),(ROOT/'index.html').as_u
       ok(pg.locator('#iocs tr').count()>=3,tag+' intel board lists indicators')
       ok(pg.locator('#typeBars .bar').count()>=3,tag+' intel scam-type chart')
       with pg.expect_download() as d: pg.click('#csvBtn')
-      csv=open(d.value.path(),encoding='utf-8-sig').read()
-      ok(csv.startswith('"indicator","kind","seen"') and '[.]' in csv,tag+' CSV export works and is defanged')
+      csv=open(d.value.path(),encoding='utf-8-sig',newline='').read(); lines=csv.split('\r\n')
+      ok(d.value.suggested_filename.startswith('ScamShield_Indicators_') and len(lines)>=4,tag+' CSV export downloads with rows')
+      ok(lines[0].startswith('"المؤشر') and all(len(l.split('","'))==7 for l in lines) and '[.]' in csv,tag+' CSV has 7 labelled columns, defanged')
+      ok(any(x in csv for x in ('تصيّد','مخالفة','جائزة')) and '/20' in csv,tag+' CSV includes scam type and dates')
+      ok('"wa[.]me"' not in csv and '"bit[.]ly"' not in csv,tag+' CSV lists real indicators, not WhatsApp/shortener domains')
       # persistence
       pg.reload(); pg.click('[data-tab="intel"]')
       ok(pg.locator('#iocs tr').count()>=3,tag+' intel persists after reload')

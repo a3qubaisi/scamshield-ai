@@ -232,7 +232,7 @@ const T={
   repTitle:'بلاغ جاهز لخدمة أمان',repNote:'الروابط مُعطّلة (defanged) بأمان. انسخ البلاغ وأرسله عبر القناة التي تناسبك. لا يُرسَل شيء تلقائياً.',
   copy:'📋 نسخ البلاغ',check:'افحص',linkTitle:'افحص أي رابط قبل فتحه',linkNote:'الفحص يتم على جهازك بالكامل، والرابط لا يُفتح ولا يُرسل لأي خادم.',
   intelTitle:'لوحة رصد الاحتيال',intelNote:'كل فحص يُضاف هنا بشكل مجهول (على هذا الجهاز فقط) ليكوّن صورة عن أنماط الاحتيال والروابط الخبيثة، ويمكن تصديرها لفرق مكافحة الجرائم الإلكترونية.',
-  byType:'أنواع الاحتيال المرصودة',byEntity:'أكثر الجهات المنتحلة',iocTitle:'مؤشرات الاختراق (روابط وأرقام خبيثة)',thInd:'المؤشر',thKind:'النوع',thSeen:'مرات الرصد',csv:'⬇️ تصدير CSV',reset:'مسح البيانات',
+  byType:'أنواع الاحتيال المرصودة',byEntity:'أكثر الجهات المنتحلة',iocTitle:'مؤشرات الاختراق (روابط وأرقام خبيثة)',thInd:'المؤشر',thKind:'النوع',thSeen:'مرات الرصد',csv:'⬇️ تصدير المؤشرات (Excel / CSV)',reset:'مسح البيانات',
   learnTitle:'قواعد ذهبية للحماية',contactTitle:'قنوات الإبلاغ الرسمية',
   disclaimer:'نموذج أولي من فريق مشارك في هاكاثون ScamShield AI، وليس منتجاً رسمياً لشرطة أبوظبي. أداة توعوية مساعدة ولا تغني عن الجهات الرسمية.',
   lvl:{ok:'آمن غالباً',warn:'مشبوه',high:'خطر مرتفع',crit:'احتيال شبه مؤكد'},
@@ -265,7 +265,7 @@ const T={
   repTitle:'Ready-made report for Aman',repNote:'Links are safely defanged. Copy the report and send it through the channel you prefer. Nothing is sent automatically.',
   copy:'📋 Copy report',check:'Check',linkTitle:'Check any link before you open it',linkNote:'Checked entirely on your device. The link is never opened or sent to a server.',
   intelTitle:'Fraud intel board',intelNote:'Every scan is logged anonymously (on this device only) to build a picture of scam patterns and malicious links, exportable for cybercrime teams.',
-  byType:'Scam types detected',byEntity:'Most impersonated entities',iocTitle:'Indicators of compromise (malicious links & numbers)',thInd:'Indicator',thKind:'Kind',thSeen:'Seen',csv:'⬇️ Export CSV',reset:'Clear data',
+  byType:'Scam types detected',byEntity:'Most impersonated entities',iocTitle:'Indicators of compromise (malicious links & numbers)',thInd:'Indicator',thKind:'Kind',thSeen:'Seen',csv:'⬇️ Export indicators (Excel / CSV)',reset:'Clear data',
   learnTitle:'Golden rules',contactTitle:'Official reporting channels',
   disclaimer:'Prototype by a participating team in the ScamShield AI hackathon. Not an official Abu Dhabi Police product. An awareness aid that does not replace official authorities.',
   lvl:{ok:'Likely safe',warn:'Suspicious',high:'High risk',crit:'Scam: almost certain'},
@@ -397,14 +397,24 @@ function renderResult(r){
 const KEY='scamshield_intel_v1';
 function loadIntel(){try{return JSON.parse(localStorage.getItem(KEY))||{scans:0,scams:0,types:{},ents:{},iocs:{}};}catch(e){return {scans:0,scams:0,types:{},ents:{},iocs:{}};}}
 let INTEL=loadIntel();
+function addIoc(k,type,ents){
+  const now=new Date().toISOString();let v=INTEL.iocs[k];
+  if(typeof v!=='object'||!v)v={n:typeof v==='number'?v:0,first:now,last:now,types:{},ents:{}};
+  v.n++;v.last=now;if(type&&type!=='none')v.types[type]=(v.types[type]||0)+1;(ents||[]).forEach(e=>v.ents[e.id]=(v.ents[e.id]||0)+1);
+  INTEL.iocs[k]=v;
+}
+// for link shorteners the useful indicator is the full short link, not the shortener's domain
+const iocKey=(host,raw)=>SHORTENERS.some(x=>host===x||host.endsWith('.'+x))?raw.replace(/^https?:\/\//i,'').replace(/\/$/,''):host;
+const iocN=v=>typeof v==='number'?v:v.n;
+const topKey=o=>{const e=Object.entries(o||{}).sort((a,b)=>b[1]-a[1])[0];return e?e[0]:'';};
 function saveIntel(){try{localStorage.setItem(KEY,JSON.stringify(INTEL));}catch(e){}}
 function logIntel(r){
   INTEL.scans++;
   if(r.level==='high'||r.level==='crit'){
     INTEL.scams++;INTEL.types[r.type]=(INTEL.types[r.type]||0)+1;
     r.entities.forEach(e=>INTEL.ents[e.id]=(INTEL.ents[e.id]||0)+1);
-    r.urls.filter(u=>!u.a.official).forEach(u=>{const k='u|'+u.a.host;INTEL.iocs[k]=(INTEL.iocs[k]||0)+1;});
-    r.phones.forEach(p=>{const k='p|'+p.raw.replace(/\s/g,'');INTEL.iocs[k]=(INTEL.iocs[k]||0)+1;});
+    r.urls.filter(u=>!u.a.official).forEach(u=>addIoc('u|'+iocKey(u.a.host,u.raw),r.type,r.entities));
+    r.phones.forEach(p=>addIoc('p|'+p.raw.replace(/\s/g,''),r.type,r.entities));
   }
   saveIntel();
 }
@@ -418,8 +428,8 @@ function renderIntel(){
   $('stats').innerHTML=[[INTEL.scans,L.scans],[INTEL.scams,L.scamsCaught],[nLinks,L.links],[Object.keys(INTEL.ents).length,L.entities]].map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
   $('typeBars').innerHTML=bars(INTEL.types,k=>TYPES[k]?TYPES[k][lang]:k);
   $('entBars').innerHTML=bars(INTEL.ents,k=>{const e=ENTITIES.find(x=>x.id===k);return e?(lang==='ar'?e.ar:e.en):k;});
-  const io=Object.entries(INTEL.iocs).sort((a,b)=>b[1]-a[1]).slice(0,30);
-  $('iocs').innerHTML=io.length?io.map(([k,v])=>`<tr><td class="dom">${esc(k[0]==='u'?defang(k.slice(2)):k.slice(2))}</td><td>${k[0]==='u'?L.kindUrl:L.kindPhone}</td><td>${v}</td></tr>`).join(''):`<tr><td colspan="3" class="meta">${L.empty}</td></tr>`;
+  const io=Object.entries(INTEL.iocs).sort((a,b)=>iocN(b[1])-iocN(a[1])).slice(0,30);
+  $('iocs').innerHTML=io.length?io.map(([k,v])=>`<tr><td class="dom">${esc(k[0]==='u'?defang(k.slice(2)):k.slice(2))}</td><td>${k[0]==='u'?L.kindUrl:L.kindPhone}</td><td>${iocN(v)}</td></tr>`).join(''):`<tr><td colspan="3" class="meta">${L.empty}</td></tr>`;
 }
 
 // ---------- events ----------
@@ -444,7 +454,7 @@ function renderUrl(a){
 function checkUrl(){
   const v=$('urlIn').value.trim();if(!v)return;
   lastUrl=analyzeUrl(v);const res=renderUrl(lastUrl);
-  INTEL.scans++;if(res.level==='high'||res.level==='crit'){INTEL.scams++;INTEL.types.phishing=(INTEL.types.phishing||0)+1;const k='u|'+lastUrl.host;INTEL.iocs[k]=(INTEL.iocs[k]||0)+1;lastUrl.entities.forEach(e=>INTEL.ents[e.id]=(INTEL.ents[e.id]||0)+1);}
+  INTEL.scans++;if(res.level==='high'||res.level==='crit'){INTEL.scams++;INTEL.types.phishing=(INTEL.types.phishing||0)+1;addIoc('u|'+iocKey(lastUrl.host,lastUrl.raw),'phishing',lastUrl.entities);lastUrl.entities.forEach(e=>INTEL.ents[e.id]=(INTEL.ents[e.id]||0)+1);}
   saveIntel();renderIntel();
 }
 $('scanBtn').onclick=scan;
@@ -459,7 +469,14 @@ $('copyRep').onclick=async()=>{const t=$('report').textContent;try{await navigat
 $('langBtn').onclick=()=>{lang=lang==='ar'?'en':'ar';applyLang();};
 $('bigBtn').onclick=()=>{document.body.classList.toggle('big');$('bigBtn').classList.toggle('on');};
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));['scan','link','intel','learn'].forEach(t=>$('tab-'+t).classList.toggle('hidden',t!==b.dataset.tab));if(b.dataset.tab==='intel')renderIntel();});
-$('csvBtn').onclick=()=>{const rows=[['indicator','kind','seen']].concat(Object.entries(INTEL.iocs).map(([k,v])=>[k[0]==='u'?defang(k.slice(2)):k.slice(2),k[0]==='u'?'url':'phone',v]));const csv='﻿'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='scamshield_iocs.csv';a.click();};
+$('csvBtn').onclick=()=>{
+  const ar=lang==='ar',d=iso=>iso?new Date(iso).toLocaleString('en-GB',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+  const head=ar?['المؤشر (رابط معطّل)','النوع','عدد مرات الرصد','نوع الاحتيال المرجّح','الجهة المنتحلة','أول رصد','آخر رصد']:['Indicator (defanged)','Kind','Times seen','Likely scam type','Impersonated entity','First seen','Last seen'];
+  const rows=Object.entries(INTEL.iocs).sort((a,b)=>iocN(b[1])-iocN(a[1])).map(([k,v])=>{
+    const o=typeof v==='object'&&v?v:{};const t=topKey(o.types),e=ENTITIES.find(x=>x.id===topKey(o.ents));
+    return [k[0]==='u'?defang(k.slice(2)):k.slice(2), k[0]==='u'?(ar?'رابط':'Link'):(ar?'رقم هاتف':'Phone number'), iocN(v), t&&TYPES[t]?TYPES[t][lang]:'', e?(ar?e.ar:e.en):'', d(o.first), d(o.last)];});
+  const csv='﻿'+[head].concat(rows).map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='ScamShield_Indicators_'+new Date().toISOString().slice(0,10)+'.csv';a.click();};
 $('resetBtn').onclick=()=>{INTEL={scans:0,scams:0,types:{},ents:{},iocs:{}};saveIntel();renderIntel();};
 applyLang();
 </script>
