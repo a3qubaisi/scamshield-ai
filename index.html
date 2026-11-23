@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ScamShield AI — درع مكافحة الاحتيال</title>
+<style>
+:root{
+  --navy:#0b2545; --navy2:#13315c; --sky:#e8f1fb; --line:#d9e3ef; --ink:#14213d; --mut:#5b6b82;
+  --ok:#1f9d55; --warn:#e0a100; --high:#e2611b; --crit:#c81e3a; --card:#fff; --bg:#f4f7fb;
+  --r:16px; --fs:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,"Noto Sans Arabic",Arial,sans-serif;font-size:var(--fs);line-height:1.55}
+body.big{--fs:19px}
+a{color:var(--navy2)}
+header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:18px 16px 54px;position:relative}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:880px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.12);display:grid;place-items:center}
+.brand h1{font-size:1.15rem;margin:0;letter-spacing:.3px}
+.brand small{display:block;opacity:.8;font-size:.78rem;font-weight:400}
+.tools{display:flex;gap:6px}
+.chip{border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:999px;padding:6px 11px;font-size:.8rem;cursor:pointer}
+.chip.on{background:#fff;color:var(--navy)}
+.hero{max-width:880px;margin:14px auto 0;font-size:.92rem;opacity:.92}
+main{max-width:880px;margin:-38px auto 0;padding:0 12px 40px;position:relative}
+.tabs{display:flex;background:#fff;border-radius:14px;padding:5px;gap:4px;box-shadow:0 6px 20px rgba(11,37,69,.08);margin-bottom:12px}
+.tab{flex:1;border:0;background:transparent;padding:10px 6px;border-radius:10px;font-weight:600;color:var(--mut);cursor:pointer;font-size:.9rem}
+.tab.on{background:var(--navy);color:#fff}
+.card{background:var(--card);border-radius:var(--r);padding:16px;box-shadow:0 4px 16px rgba(11,37,69,.06);margin-bottom:12px;border:1px solid var(--line)}
+.card h2{font-size:1rem;margin:0 0 10px}
+textarea,input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:#fbfdff;color:var(--ink);resize:vertical}
+textarea{min-height:130px}
+textarea:focus,input:focus{outline:none;border-color:var(--navy2);background:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{border:0;border-radius:12px;padding:12px 16px;font:inherit;font-weight:700;cursor:pointer;background:var(--navy);color:#fff;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn.sec{background:var(--sky);color:var(--navy)}
+.btn.red{background:var(--crit)}
+.btn.grow{flex:1;justify-content:center}
+.samples{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-top:10px;scrollbar-width:thin}
+.sample{flex:0 0 auto;border:1px dashed var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:.8rem;cursor:pointer;color:var(--navy2)}
+.hidden{display:none!important}
+.verdict{display:flex;gap:16px;align-items:center}
+.gauge{--v:0;--c:var(--ok);width:104px;height:104px;border-radius:50%;flex:0 0 auto;background:conic-gradient(var(--c) calc(var(--v)*1%),#e9eef5 0);display:grid;place-items:center;transition:all .5s}
+.gauge div{width:80px;height:80px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center}
+.gauge b{font-size:1.6rem;line-height:1}
+.gauge span{font-size:.68rem;color:var(--mut)}
+.vtext h3{margin:0 0 4px;font-size:1.15rem}
+.pill{display:inline-block;border-radius:999px;padding:3px 10px;font-size:.78rem;font-weight:700;color:#fff}
+.meta{color:var(--mut);font-size:.85rem;margin-top:4px}
+.hl{white-space:pre-wrap;word-break:break-word;background:#fbfdff;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.95rem}
+mark{border-radius:4px;padding:0 2px;background:#ffe9a8}
+mark.c-link{background:#ffd0d6}
+mark.c-cred{background:#ffc9b0}
+mark.c-imp{background:#cfe0ff}
+mark.c-pay{background:#ffe3a3}
+mark.c-urg{background:#ffe0ef}
+mark.c-safe{background:#cdeedb}
+ul.reasons{list-style:none;padding:0;margin:0}
+ul.reasons li{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #eef2f7;font-size:.92rem}
+ul.reasons li:last-child{border:0}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:7px;flex:0 0 auto}
+.w{margin-inline-start:auto;direction:ltr;color:var(--mut);font-size:.75rem;white-space:nowrap}
+ol.acts{margin:0;padding-inline-start:20px}
+ol.acts li{margin:6px 0}
+pre.report{white-space:pre-wrap;background:#0f1e33;color:#dfe8f5;border-radius:12px;padding:12px;font-size:.8rem;max-height:260px;overflow:auto;direction:ltr;text-align:left;margin:0}
+body[dir=rtl] pre.report{direction:rtl;text-align:right}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:var(--sky);border-radius:12px;padding:12px}
+.stat b{font-size:1.5rem;display:block}
+.stat span{font-size:.8rem;color:var(--mut)}
+.bar{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.85rem}
+.bar .lbl{width:150px;flex:0 0 auto}
+.bar .trk{flex:1;background:#eef2f7;border-radius:6px;height:12px;overflow:hidden}
+.bar .fill{height:100%;background:var(--navy2);border-radius:6px}
+.bar .n{width:30px;text-align:center;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+td,th{padding:7px 6px;border-bottom:1px solid #eef2f7;text-align:start}
+td.dom{direction:ltr;font-family:ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
+.tip{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #eef2f7}
+.tip:last-child{border:0}
+.tip i{font-style:normal;font-size:1.3rem}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:12px;font-size:.88rem;opacity:0;transition:.3s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:10px 0 30px}
+.urlrow{display:flex;gap:8px}
+.urlrow input{direction:ltr;text-align:left}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:.75rem;color:var(--mut)}
+.legend mark{font-size:.75rem}
+@media (max-width:520px){.bar .lbl{width:105px}.verdict{gap:12px}.gauge{width:92px;height:92px}.gauge div{width:70px;height:70px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">
+      <div class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div>
+      <div><h1>ScamShield AI</h1><small data-i="tagline"></small></div>
+    </div>
+    <div class="tools">
+      <button class="chip" id="bigBtn" title="Large text">A+</button>
+      <button class="chip" id="langBtn">EN</button>
+    </div>
+  </div>
+  <p class="hero" data-i="hero"></p>
+</header>
+
+<main>
+  <nav class="tabs">
+    <button class="tab on" data-tab="scan" data-i="tabScan"></button>
+    <button class="tab" data-tab="link" data-i="tabLink"></button>
+    <button class="tab" data-tab="intel" data-i="tabIntel"></button>
+    <button class="tab" data-tab="learn" data-i="tabLearn"></button>
+  </nav>
+
+  <!-- SCAN -->
+  <section id="tab-scan">
+    <div class="card">
+      <h2 data-i="scanTitle"></h2>
+      <textarea id="msg" data-ph="scanPh"></textarea>
+      <div class="samples" id="samples"></div>
+      <div class="row">
+        <button class="btn grow" id="scanBtn"><span data-i="scanBtn"></span></button>
+        <button class="btn sec" id="pasteBtn" data-i="paste"></button>
+        <button class="btn sec" id="clearBtn" data-i="clear"></button>
+      </div>
+    </div>
+
+    <div id="result" class="hidden">
+      <div class="card">
+        <div class="verdict">
+          <div class="gauge" id="gauge"><div><b id="score">0</b><span data-i="risk"></span></div></div>
+          <div class="vtext">
+            <span class="pill" id="levelPill"></span>
+            <h3 id="vTitle"></h3>
+            <div class="meta" id="vMeta"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2 data-i="whyTitle"></h2>
+        <ul class="reasons" id="reasons"></ul>
+      </div>
+      <div class="card">
+        <h2 data-i="hlTitle"></h2>
+        <div class="hl" id="hl"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="card">
+        <h2 data-i="doTitle"></h2>
+        <ol class="acts" id="acts"></ol>
+      </div>
+      <div class="card" id="reportCard">
+        <h2 data-i="repTitle"></h2>
+        <p class="meta" data-i="repNote"></p>
+        <pre class="report" id="report"></pre>
+        <div class="row">
+          <button class="btn sec" id="copyRep" data-i="copy"></button>
+          <a class="btn red" id="callAman" href="tel:8002626">📞 8002626</a>
+          <a class="btn" id="smsAman" href="sms:2828">💬 SMS 2828</a>
+          <a class="btn sec" id="mailAman" href="#">✉️ aman@adpolice.gov.ae</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINK -->
+  <section id="tab-link" class="hidden">
+    <div class="card">
+      <h2 data-i="linkTitle"></h2>
+      <div class="urlrow">
+        <input type="text" id="urlIn" placeholder="https://..." autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button class="btn" id="urlBtn" data-i="check"></button>
+      </div>
+      <div class="samples" id="urlSamples"></div>
+      <p class="meta" data-i="linkNote"></p>
+    </div>
+    <div id="urlRes" class="hidden">
+      <div class="card">
+        <div class="verdict">
+          <div class="gauge" id="ugauge"><div><b id="uscore">0</b><span data-i="risk"></span></div></div>
+          <div class="vtext"><span class="pill" id="ulevel"></span><h3 id="uTitle" style="direction:ltr;text-align:start;word-break:break-all"></h3><div class="meta" id="uMeta"></div></div>
+        </div>
+      </div>
+      <div class="card"><h2 data-i="whyTitle"></h2><ul class="reasons" id="ureasons"></ul></div>
+    </div>
+  </section>
+
+  <!-- INTEL -->
+  <section id="tab-intel" class="hidden">
+    <div class="card">
+      <h2 data-i="intelTitle"></h2>
+      <p class="meta" data-i="intelNote"></p>
+      <div class="grid" id="stats"></div>
+    </div>
+    <div class="card"><h2 data-i="byType"></h2><div id="typeBars"></div></div>
+    <div class="card"><h2 data-i="byEntity"></h2><div id="entBars"></div></div>
+    <div class="card">
+      <h2 data-i="iocTitle"></h2>
+      <table><thead><tr><th data-i="thInd"></th><th data-i="thKind"></th><th data-i="thSeen"></th></tr></thead><tbody id="iocs"></tbody></table>
+      <div class="row">
+        <button class="btn sec" id="csvBtn" data-i="csv"></button>
+        <button class="btn sec" id="resetBtn" data-i="reset"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEARN -->
+  <section id="tab-learn" class="hidden">
+    <div class="card"><h2 data-i="learnTitle"></h2><div id="tips"></div></div>
+    <div class="card"><h2 data-i="contactTitle"></h2><div id="contacts"></div></div>
+  </section>
+
+  <footer>
+    <div data-i="disclaimer"></div>
+  </footer>
+</main>
+<div class="toast" id="toast"></div>
+
+<script src="src/model.js"></script>
+<script src="src/engine.js"></script>
+
+<script>
+// ===================== UI =====================
+const T={
+ ar:{tagline:'درع مكافحة الاحتيال الإلكتروني',hero:'الصق أي رسالة SMS أو واتساب أو بريد، أو أي رابط، وسيكشف ScamShield خلال ثانية إن كان احتيالاً، ويشرح لماذا، ويجهّز البلاغ لخدمة أمان.',
+  tabScan:'فحص رسالة',tabLink:'فحص رابط',tabIntel:'لوحة الرصد',tabLearn:'توعية',
+  scanTitle:'الصق الرسالة المشبوهة',scanPh:'مثال: شرطة أبوظبي: لديك مخالفة مرورية غير مدفوعة 200 درهم، ادفع خلال 24 ساعة لتجنب الإجراءات القانونية: adpolice-fines.com',
+  scanBtn:'🔍 افحص الآن',paste:'لصق',clear:'مسح',risk:'نسبة الخطر',
+  whyTitle:'لماذا هذا الحكم؟',hlTitle:'المؤشرات داخل الرسالة',doTitle:'ماذا تفعل الآن؟',
+  repTitle:'بلاغ جاهز لخدمة أمان',repNote:'الروابط مُعطّلة (defanged) بأمان. انسخ البلاغ وأرسله عبر القناة التي تناسبك. لا يُرسَل شيء تلقائياً.',
+  copy:'📋 نسخ البلاغ',check:'افحص',linkTitle:'افحص أي رابط قبل فتحه',linkNote:'الفحص يتم على جهازك بالكامل، والرابط لا يُفتح ولا يُرسل لأي خادم.',
+  intelTitle:'لوحة رصد الاحتيال',intelNote:'كل فحص يُضاف هنا بشكل مجهول (على هذا الجهاز فقط) ليكوّن صورة عن أنماط الاحتيال والروابط الخبيثة، ويمكن تصديرها لفرق مكافحة الجرائم الإلكترونية.',
+  byType:'أنواع الاحتيال المرصودة',byEntity:'أكثر الجهات المنتحلة',iocTitle:'مؤشرات الاختراق (روابط وأرقام خبيثة)',thInd:'المؤشر',thKind:'النوع',thSeen:'مرات الرصد',csv:'⬇️ تصدير CSV',reset:'مسح البيانات',
+  learnTitle:'قواعد ذهبية للحماية',contactTitle:'قنوات الإبلاغ الرسمية',
+  disclaimer:'نموذج أولي من فريق مشارك في هاكاثون ScamShield AI، وليس منتجاً رسمياً لشرطة أبوظبي. أداة توعوية مساعدة ولا تغني عن الجهات الرسمية.',
+  lvl:{ok:'آمن غالباً',warn:'مشبوه',high:'خطر مرتفع',crit:'احتيال شبه مؤكد'},
+  vt:{ok:'لم نجد مؤشرات احتيال واضحة',warn:'كن حذراً، توجد مؤشرات مشبوهة',high:'على الأرجح احتيال',crit:'احتيال. لا تتفاعل معه'},
+  type:'النوع',scans:'عمليات فحص',scamsCaught:'احتيال مكتشف',links:'روابط خبيثة',entities:'جهات منتحلة',empty:'لا توجد بيانات بعد. افحص بعض الرسائل.',
+  copied:'تم النسخ ✓',noPaste:'اسمح بالوصول للحافظة أو الصق يدوياً',needText:'الصق رسالة أولاً',
+  leg:{imp:'جهة منتحلة',link:'رابط/رقم مشبوه',cred:'طلب بيانات',pay:'طلب دفع',urg:'استعجال',threat:'تهديد/طُعم',bait:'طُعم',safe:'مؤشر أمان'},
+  kindUrl:'رابط',kindPhone:'رقم',
+  acts:{
+   base:['لا تضغط على أي رابط في الرسالة، ولا ترد عليها.','لا تشارك رمز التحقق OTP أو الرقم السري أو بيانات البطاقة مع أي أحد.'],
+   gov:'تحقق من أي مخالفة أو معاملة حكومية فقط من التطبيق أو الموقع الرسمي (مثل تطبيق شرطة أبوظبي أو TAMM)، وليس من رابط في رسالة.',
+   bank:'اتصل ببنكك على الرقم المطبوع خلف بطاقتك.',
+   paid:'إذا أدخلت بيانات بطاقتك أو دفعت: اتصل ببنكك فوراً لإيقاف البطاقة، ثم بلّغ أمان 8002626.',
+   family:'اتصل بقريبك على رقمه القديم المعروف قبل تحويل أي مبلغ.',
+   black:'لا تدفع أي مبلغ للمبتز ولا تحذف المحادثة، واحتفظ بالأدلة وبلّغ فوراً.',
+   job:'لا توجد وظيفة حقيقية تطلب منك إيداع مال لتبدأ العمل.',
+   report:'بلّغ خدمة أمان: 8002626 أو SMS إلى 2828 أو aman@adpolice.gov.ae أو عبر تطبيق شرطة أبوظبي.',
+   block:'احظر الرقم واحذف الرسالة بعد الإبلاغ.',
+   ok:['تبدو الرسالة سليمة، لكن تحقق دائماً من المرسل.','إذا طُلب منك أي رمز أو دفع لاحقاً فتوقف وتحقق.']
+  },
+  tips:[['🔐','لا جهة رسمية تطلب منك رمز OTP أو الرقم السري أو CVV، لا بالرسالة ولا بالاتصال.'],['🏛️','المواقع الحكومية الإماراتية تنتهي بـ ‎.gov.ae، وأي شيء آخر يدّعي أنه حكومي فهو مشبوه.'],['📦','شركات الشحن لا تطلب "رسوماً بسيطة" عبر رابط في SMS. افتح التطبيق الرسمي وتابع الشحنة منه.'],['🎁','إذا لم تشارك في سحب فأنت لم تربح. وأي جائزة تطلب رسوماً هي احتيال.'],['💼','الوظيفة الحقيقية تدفع لك، ولا تطلب منك أن تدفع.'],['📈','"أرباح مضمونة" أو "ضاعف أموالك" علامة احتيال مؤكدة.'],['👨‍👩‍👦','"هذا رقمي الجديد، حوّل لي ضروري"؟ اتصل بالرقم القديم أولاً.'],['⏱️','الاستعجال سلاح المحتال. خذ نفساً وتحقق قبل أي خطوة.']],
+  contacts:[['خدمة أمان (شرطة أبوظبي)','8002626','tel:8002626'],['رسالة نصية لأمان','2828','sms:2828'],['بريد أمان','aman@adpolice.gov.ae','mailto:aman@adpolice.gov.ae'],['الطوارئ','999','tel:999'],['منصة الجرائم الإلكترونية (شرطة دبي)','ecrime.ae','https://www.ecrime.ae']],
+  rep:{title:'بلاغ احتيال إلكتروني (مُولّد بواسطة ScamShield AI)',date:'التاريخ',score:'درجة الخطورة',type:'النوع المحتمل',ent:'الجهة المنتحلة',urls:'الروابط المشبوهة',phones:'الأرقام',reasons:'المؤشرات',msg:'نص الرسالة',none:'لا يوجد'}
+ },
+ en:{tagline:'Cyber-fraud shield',hero:'Paste any SMS, WhatsApp, email or link. In a second ScamShield tells you whether it is a scam, explains why, and drafts the report for the Aman service.',
+  tabScan:'Scan message',tabLink:'Check link',tabIntel:'Intel board',tabLearn:'Awareness',
+  scanTitle:'Paste the suspicious message',scanPh:'e.g. Abu Dhabi Police: You have an unpaid traffic fine of AED 200. Pay within 24 hours to avoid legal action: adpolice-fines.com',
+  scanBtn:'🔍 Scan now',paste:'Paste',clear:'Clear',risk:'risk',
+  whyTitle:'Why this verdict?',hlTitle:'Red flags in the message',doTitle:'What to do now',
+  repTitle:'Ready-made report for Aman',repNote:'Links are safely defanged. Copy the report and send it through the channel you prefer. Nothing is sent automatically.',
+  copy:'📋 Copy report',check:'Check',linkTitle:'Check any link before you open it',linkNote:'Checked entirely on your device. The link is never opened or sent to a server.',
+  intelTitle:'Fraud intel board',intelNote:'Every scan is logged anonymously (on this device only) to build a picture of scam patterns and malicious links, exportable for cybercrime teams.',
+  byType:'Scam types detected',byEntity:'Most impersonated entities',iocTitle:'Indicators of compromise (malicious links & numbers)',thInd:'Indicator',thKind:'Kind',thSeen:'Seen',csv:'⬇️ Export CSV',reset:'Clear data',
+  learnTitle:'Golden rules',contactTitle:'Official reporting channels',
+  disclaimer:'Prototype by a participating team in the ScamShield AI hackathon. Not an official Abu Dhabi Police product. An awareness aid that does not replace official authorities.',
+  lvl:{ok:'Likely safe',warn:'Suspicious',high:'High risk',crit:'Scam: almost certain'},
+  vt:{ok:'No clear scam signals found',warn:'Be careful: suspicious signals',high:'Probably a scam',crit:'Scam. Do not engage'},
+  type:'Type',scans:'Scans',scamsCaught:'Scams caught',links:'Malicious links',entities:'Entities impersonated',empty:'No data yet. Scan a few messages.',
+  copied:'Copied ✓',noPaste:'Allow clipboard access or paste manually',needText:'Paste a message first',
+  leg:{imp:'Impersonated entity',link:'Suspicious link/number',cred:'Data request',pay:'Payment request',urg:'Urgency',threat:'Threat/bait',bait:'Bait',safe:'Safe signal'},
+  kindUrl:'link',kindPhone:'number',
+  acts:{
+   base:['Do not click any link in the message, and do not reply.','Never share an OTP, PIN or card details with anyone.'],
+   gov:'Check any fine or government transaction only in the official app or website (e.g. Abu Dhabi Police app, TAMM), never through a link in a message.',
+   bank:'Call your bank on the number printed on the back of your card.',
+   paid:'If you entered card details or paid: call your bank immediately to block the card, then report to Aman 8002626.',
+   family:'Call your relative on their old, known number before sending any money.',
+   black:'Do not pay the blackmailer and do not delete the chat. Keep the evidence and report immediately.',
+   job:'No real job asks you to deposit money to start working.',
+   report:'Report to Aman: 8002626, SMS 2828, aman@adpolice.gov.ae or the Abu Dhabi Police app.',
+   block:'Block the number and delete the message after reporting.',
+   ok:['The message looks fine, but always verify the sender.','If you are later asked for a code or payment, stop and verify.']
+  },
+  tips:[['🔐','No official body will ask for your OTP, PIN or CVV, by message or by phone.'],['🏛️','UAE government sites end with .gov.ae. Anything else claiming to be government is suspicious.'],['📦','Couriers don\'t ask for a "small fee" via an SMS link. Track the parcel in the official app.'],['🎁','If you didn\'t enter a draw, you didn\'t win. A prize that needs a fee is a scam.'],['💼','A real job pays you; it doesn\'t make you pay.'],['📈','"Guaranteed profit" or "double your money" is a sure sign of fraud.'],['👨‍👩‍👦','"New number, send money urgently"? Call the old number first.'],['⏱️','Urgency is the scammer\'s weapon. Pause and verify before any step.']],
+  contacts:[['Aman service (Abu Dhabi Police)','8002626','tel:8002626'],['Aman SMS','2828','sms:2828'],['Aman email','aman@adpolice.gov.ae','mailto:aman@adpolice.gov.ae'],['Emergency','999','tel:999'],['eCrime platform (Dubai Police)','ecrime.ae','https://www.ecrime.ae']],
+  rep:{title:'Cyber-fraud report (generated by ScamShield AI)',date:'Date',score:'Risk score',type:'Likely type',ent:'Impersonated entity',urls:'Suspicious links',phones:'Phone numbers',reasons:'Indicators',msg:'Message text',none:'None'}
+ }
+};
+const SAMPLES=[
+ {ar:'مخالفة',en:'Fake fine',t:'شرطة أبوظبي: لديك مخالفة مرورية غير مدفوعة بقيمة 200 درهم. يرجى السداد خلال 24 ساعة لتجنب الإجراءات القانونية عبر الرابط: https://adpolice-fines.top/pay'},
+ {ar:'شحنة',en:'Parcel',t:'Emirates Post: Your parcel is on hold due to incomplete address. Pay AED 5.50 redelivery fee to avoid return: https://emiratespost-ae.xyz/track'},
+ {ar:'رمز OTP',en:'OTP',t:'مرحبا معك موظف بنك أبوظبي الأول، تم تجميد بطاقتك. ارسل الرمز اللي وصلك الحين عشان نفعل الحساب ضروري'},
+ {ar:'جائزة',en:'Prize',t:'Congratulations! Your number has been selected as the winner of AED 50,000 in the ADNOC lucky draw. To claim your prize pay a small processing fee of AED 99. Contact our agent on WhatsApp +92 300 0000000'},
+ {ar:'وظيفة',en:'Job',t:'وظيفة دوام جزئي من المنزل! اربح 800 درهم يومياً بمهام بسيطة (لايك على فيديوهات). بدون خبرة. تواصل معنا عبر الواتساب wa.me/620000000000'},
+ {ar:'قريب',en:'Relative',t:'هلا يبه هذا رقمي الجديد ضاع تلفوني. محتاج فلوس ضروري حول لي 3000 درهم اليوم ولا تقول لاحد'},
+ {ar:'استثمار',en:'Invest',t:'Join our crypto trading platform: guaranteed profit 15% daily, risk-free! Double your money in one week. Register: bit.ly/uae-crypto-pro'},
+ {ar:'رسالة بنك حقيقية',en:'Real bank SMS',t:'Your OTP for FAB online transaction of AED 120.00 at Carrefour is 482913. Do not share this code with anyone. If this wasn\'t you, call the number on your card.'},
+ {ar:'شحنة حقيقية',en:'Real delivery',t:'Aramex: Your shipment 3048821 will be delivered today between 2-6 PM. Track it on https://www.aramex.com/track'}
+];
+const URL_SAMPLES=['https://adpolice.gov.ae','http://uaepass-login.com/verify','https://emlratesnbd.com','bit.ly/3xYz9Q','https://tamm-gov-ae.online/fines','http://185.243.11.4/aramex/pay'];
+
+let lang='ar';let last=null;
+const $=id=>document.getElementById(id);
+const LCOL={ok:'var(--ok)',warn:'var(--warn)',high:'var(--high)',crit:'var(--crit)'};
+const CATCOL={imp:'#3b6fd8',link:'#c81e3a',cred:'#e2611b',pay:'#e0a100',urg:'#d6408a',threat:'#8a3ffc',bait:'#e0a100',safe:'#1f9d55'};
+const CATCLS={imp:'c-imp',link:'c-link',cred:'c-cred',pay:'c-pay',urg:'c-urg',threat:'',bait:'c-pay',safe:'c-safe'};
+
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1600);}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function applyLang(){
+  const L=T[lang];
+  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.body.dir=document.documentElement.dir;
+  document.querySelectorAll('[data-i]').forEach(el=>{const k=el.dataset.i;if(L[k]!==undefined)el.textContent=L[k];});
+  document.querySelectorAll('[data-ph]').forEach(el=>el.placeholder=L[el.dataset.ph]);
+  $('langBtn').textContent=lang==='ar'?'EN':'عربي';
+  $('samples').innerHTML=SAMPLES.map((s,i)=>`<button class="sample" data-s="${i}">${esc(s[lang])}</button>`).join('');
+  $('urlSamples').innerHTML=URL_SAMPLES.map(u=>`<button class="sample" style="direction:ltr" data-u="${esc(u)}">${esc(u)}</button>`).join('');
+  $('tips').innerHTML=L.tips.map(t=>`<div class="tip"><i>${t[0]}</i><div>${esc(t[1])}</div></div>`).join('');
+  $('contacts').innerHTML=L.contacts.map(c=>`<div class="tip"><i>☎️</i><div><b>${esc(c[0])}</b><br><a href="${c[2]}" target="_blank" rel="noopener">${esc(c[1])}</a></div></div>`).join('');
+  if(last)renderResult(last);
+  if(lastUrl)renderUrl(lastUrl);
+  renderIntel();
+}
+
+function setGauge(g,scoreEl,score,level){g.style.setProperty('--v',score);g.style.setProperty('--c',LCOL[level]);scoreEl.textContent=score;}
+
+function highlight(text,spans){
+  const marks=new Array(text.length).fill(null);
+  const prio={link:7,cred:6,imp:5,pay:4,threat:3,urg:2,bait:2,safe:1};
+  spans.forEach(sp=>{for(let i=sp.st;i<sp.en&&i<text.length;i++){if(!marks[i]||prio[sp.cat]>prio[marks[i]])marks[i]=sp.cat;}});
+  let out='',cur=null,buf='';
+  const flush=()=>{if(!buf)return;out+=cur?`<mark class="${CATCLS[cur]||''}">${esc(buf)}</mark>`:esc(buf);buf='';};
+  for(let i=0;i<text.length;i++){if(marks[i]!==cur){flush();cur=marks[i];}buf+=text[i];}
+  flush();return out;
+}
+
+function buildReport(r){
+  const R=T[lang].rep;const L=T[lang];
+  const ents=r.entities.map(e=>lang==='ar'?e.ar:e.en).join(', ')||R.none;
+  const urls=r.urls.filter(u=>!u.a.official).map(u=>defang(u.raw)).join('\n  ')||R.none;
+  const phones=r.phones.map(p=>p.raw.trim()).join(', ')||R.none;
+  const reasons=r.hits.filter(h=>h.w>0).slice(0,6).map(h=>'• '+(lang==='ar'?h.ar:h.en)).join('\n');
+  return `${R.title}
+${R.date}: ${new Date().toLocaleString(lang==='ar'?'ar-AE':'en-GB')}
+${R.score}: ${r.score}/100 (${L.lvl[r.level]})
+${R.type}: ${TYPES[r.type][lang]}
+${R.ent}: ${ents}
+${R.urls}:
+  ${urls}
+${R.phones}: ${phones}
+${R.reasons}:
+${reasons}
+${R.msg}:
+"""${r.text.replace(/https?:\/\/\S+/gi,m=>defang(m))}"""`;
+}
+
+function renderResult(r){
+  const L=T[lang];
+  $('result').classList.remove('hidden');
+  setGauge($('gauge'),$('score'),r.score,r.level);
+  const p=$('levelPill');p.textContent=L.lvl[r.level];p.style.background=LCOL[r.level];
+  $('vTitle').textContent=L.vt[r.level];
+  $('vMeta').textContent=r.type!=='none'?`${L.type}: ${TYPES[r.type][lang]}`:'';
+  $('reasons').innerHTML=r.hits.length?r.hits.map(h=>`<li><span class="dot" style="background:${CATCOL[h.cat]||'#999'}"></span><div>${esc(lang==='ar'?h.ar:h.en)}</div><span class="w">${h.w>0?'+':''}${h.w}</span></li>`).join(''):`<li><span class="dot" style="background:var(--ok)"></span><div>${esc(L.vt.ok)}</div></li>`;
+  $('hl').innerHTML=highlight(r.text,r.spans);
+  const cats=[...new Set(r.spans.map(s=>s.cat))];
+  $('legend').innerHTML=cats.map(c=>`<mark class="${CATCLS[c]||''}">${esc(L.leg[c]||c)}</mark>`).join('');
+  // actions
+  const A=L.acts;let acts=[];
+  if(r.level==='ok'){acts=A.ok.slice();}
+  else{
+    acts=A.base.slice();
+    if(r.entities.some(e=>e.gov)||r.type==='fine')acts.push(A.gov);
+    if(r.entities.some(e=>e.bank)||r.type==='otp'||r.type==='account')acts.push(A.bank);
+    if(r.type==='family')acts.push(A.family);
+    if(r.type==='blackmail')acts.unshift(A.black);
+    if(r.type==='job')acts.push(A.job);
+    acts.push(A.paid,A.report,A.block);
+  }
+  $('acts').innerHTML=acts.map(a=>`<li>${esc(a)}</li>`).join('');
+  // report
+  const show=r.level!=='ok';$('reportCard').classList.toggle('hidden',!show);
+  if(show){
+    const rep=buildReport(r);$('report').textContent=rep;
+    $('smsAman').href='sms:2828?&body='+encodeURIComponent(rep.slice(0,600));
+    $('mailAman').href='mailto:aman@adpolice.gov.ae?subject='+encodeURIComponent('ScamShield AI — '+TYPES[r.type][lang])+'&body='+encodeURIComponent(rep);
+  }
+}
+
+// ---------- intel store ----------
+const KEY='scamshield_intel_v1';
+function loadIntel(){try{return JSON.parse(localStorage.getItem(KEY))||{scans:0,scams:0,types:{},ents:{},iocs:{}};}catch(e){return {scans:0,scams:0,types:{},ents:{},iocs:{}};}}
+let INTEL=loadIntel();
+function saveIntel(){try{localStorage.setItem(KEY,JSON.stringify(INTEL));}catch(e){}}
+function logIntel(r){
+  INTEL.scans++;
+  if(r.level==='high'||r.level==='crit'){
+    INTEL.scams++;INTEL.types[r.type]=(INTEL.types[r.type]||0)+1;
+    r.entities.forEach(e=>INTEL.ents[e.id]=(INTEL.ents[e.id]||0)+1);
+    r.urls.filter(u=>!u.a.official).forEach(u=>{const k='u|'+u.a.host;INTEL.iocs[k]=(INTEL.iocs[k]||0)+1;});
+    r.phones.forEach(p=>{const k='p|'+p.raw.replace(/\s/g,'');INTEL.iocs[k]=(INTEL.iocs[k]||0)+1;});
+  }
+  saveIntel();
+}
+function bars(obj,labelFn){
+  const e=Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,8);if(!e.length)return `<p class="meta">${T[lang].empty}</p>`;
+  const max=e[0][1];return e.map(([k,v])=>`<div class="bar"><span class="lbl">${esc(labelFn(k))}</span><span class="trk"><span class="fill" style="width:${v/max*100}%;display:block"></span></span><span class="n">${v}</span></div>`).join('');
+}
+function renderIntel(){
+  const L=T[lang];
+  const nLinks=Object.keys(INTEL.iocs).filter(k=>k.startsWith('u|')).length;
+  $('stats').innerHTML=[[INTEL.scans,L.scans],[INTEL.scams,L.scamsCaught],[nLinks,L.links],[Object.keys(INTEL.ents).length,L.entities]].map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
+  $('typeBars').innerHTML=bars(INTEL.types,k=>TYPES[k]?TYPES[k][lang]:k);
+  $('entBars').innerHTML=bars(INTEL.ents,k=>{const e=ENTITIES.find(x=>x.id===k);return e?(lang==='ar'?e.ar:e.en):k;});
+  const io=Object.entries(INTEL.iocs).sort((a,b)=>b[1]-a[1]).slice(0,30);
+  $('iocs').innerHTML=io.length?io.map(([k,v])=>`<tr><td class="dom">${esc(k[0]==='u'?defang(k.slice(2)):k.slice(2))}</td><td>${k[0]==='u'?L.kindUrl:L.kindPhone}</td><td>${v}</td></tr>`).join(''):`<tr><td colspan="3" class="meta">${L.empty}</td></tr>`;
+}
+
+// ---------- events ----------
+function scan(){
+  const t=$('msg').value.trim();if(!t){toast(T[lang].needText);return;}
+  last=analyzeMessage(t);renderResult(last);logIntel(last);renderIntel();
+  setTimeout(()=>$('result').scrollIntoView({behavior:'smooth',block:'start'}),60);
+}
+let lastUrl=null;
+function renderUrl(a){
+  const L=T[lang];
+  const score=a.official?2:Math.min(99,Math.round(100*(1-Math.exp(-Math.max(0,a.pts)/30))));
+  const level=score>=80?'crit':score>=55?'high':score>=25?'warn':'ok';
+  $('urlRes').classList.remove('hidden');
+  setGauge($('ugauge'),$('uscore'),score,level);
+  const p=$('ulevel');p.textContent=L.lvl[level];p.style.background=LCOL[level];
+  $('uTitle').textContent=a.host||a.raw;
+  $('uMeta').textContent=a.entities.length?(lang==='ar'?'مرتبط بـ: ':'Related to: ')+a.entities.map(e=>lang==='ar'?e.ar:e.en).join(', '):'';
+  $('ureasons').innerHTML=a.findings.map(f=>`<li><span class="dot" style="background:${f.w<0?'var(--ok)':f.w>=25?'var(--crit)':'var(--warn)'}"></span><div>${esc(lang==='ar'?f.ar:f.en)}</div><span class="w">${f.w>0?'+':''}${f.w}</span></li>`).join('');
+  return {score,level};
+}
+function checkUrl(){
+  const v=$('urlIn').value.trim();if(!v)return;
+  lastUrl=analyzeUrl(v);const res=renderUrl(lastUrl);
+  INTEL.scans++;if(res.level==='high'||res.level==='crit'){INTEL.scams++;INTEL.types.phishing=(INTEL.types.phishing||0)+1;const k='u|'+lastUrl.host;INTEL.iocs[k]=(INTEL.iocs[k]||0)+1;lastUrl.entities.forEach(e=>INTEL.ents[e.id]=(INTEL.ents[e.id]||0)+1);}
+  saveIntel();renderIntel();
+}
+$('scanBtn').onclick=scan;
+$('msg').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))scan();});
+$('clearBtn').onclick=()=>{$('msg').value='';$('result').classList.add('hidden');last=null;};
+$('pasteBtn').onclick=async()=>{try{$('msg').value=await navigator.clipboard.readText();scan();}catch(e){toast(T[lang].noPaste);}};
+$('samples').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;$('msg').value=SAMPLES[+b.dataset.s].t;scan();};
+$('urlSamples').onclick=e=>{const b=e.target.closest('[data-u]');if(!b)return;$('urlIn').value=b.dataset.u;checkUrl();};
+$('urlBtn').onclick=checkUrl;
+$('urlIn').addEventListener('keydown',e=>{if(e.key==='Enter')checkUrl();});
+$('copyRep').onclick=async()=>{const t=$('report').textContent;try{await navigator.clipboard.writeText(t);}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(_){}ta.remove();}toast(T[lang].copied);};
+$('langBtn').onclick=()=>{lang=lang==='ar'?'en':'ar';applyLang();};
+$('bigBtn').onclick=()=>{document.body.classList.toggle('big');$('bigBtn').classList.toggle('on');};
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));['scan','link','intel','learn'].forEach(t=>$('tab-'+t).classList.toggle('hidden',t!==b.dataset.tab));if(b.dataset.tab==='intel')renderIntel();});
+$('csvBtn').onclick=()=>{const rows=[['indicator','kind','seen']].concat(Object.entries(INTEL.iocs).map(([k,v])=>[k[0]==='u'?defang(k.slice(2)):k.slice(2),k[0]==='u'?'url':'phone',v]));const csv='﻿'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='scamshield_iocs.csv';a.click();};
+$('resetBtn').onclick=()=>{INTEL={scans:0,scams:0,types:{},ents:{},iocs:{}};saveIntel();renderIntel();};
+applyLang();
+</script>
+</body>
+</html>
